@@ -7,6 +7,8 @@ import static com.onecat.godotcas.Utils.fieldsToDictionary;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.util.Log;
 import android.view.View;
@@ -792,6 +794,24 @@ public class GodotCas extends GodotPlugin {
         NetworkInfo networkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
         //noinspection deprecation
         return networkInfo != null && networkInfo.isConnected();
+    }
+
+    @UsedByGodot
+    public boolean isVpnActive() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            return false;
+        }
+
+        Network[] networks = connectivityManager.getAllNetworks();
+        for (Network network : networks) {
+            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
+            if (capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private AdViewListener createBannerCallbacks() {
