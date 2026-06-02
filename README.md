@@ -1,3 +1,7 @@
+### Dev Note
+Warning!
+- CAS 4.7.3 tested only for godot 4.6.3 (steam version)
+
 # Godot CAS 4.7.3
 [![CAS.AI](https://img.shields.io/badge/CAS.AI_SDK_4.7.3-blue?style=for-the-badge&logoSize=auto)](https://cas.ai/)
 [![Godot](https://img.shields.io/badge/Godot%20Engine-3.6.2-blue?style=for-the-badge&logo=godotengine&logoSize=auto)](https://godotengine.org/)
