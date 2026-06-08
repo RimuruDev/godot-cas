@@ -1,15 +1,37 @@
+> ## ⚠️ Abyss Moth fork — read this first
+>
+> This is a **fork** of [damnedpie/godot-cas](https://github.com/damnedpie/godot-cas),
+> maintained by Abyss Moth (RimuruDev) for our own game projects.
+>
+> **Godot 3 is NOT supported here.** The `godot3` module was removed — this fork is
+> Godot 4 only. If you need Godot 3 support, use the upstream repo:
+> https://github.com/damnedpie/godot-cas
+>
+> **What this fork adds on top of upstream:**
+> - Native VPN detection: `isVpnActive()` (+ existing `isWifiOrMobileInternetEnabled()`),
+>   handy to gate/adjust ad logic on the game side.
+> - Godot 3 removed — leaner, Godot 4 only.
+> - `rebuild_aar.command` — one command to rebuild the Godot 4 AAR (Gradle 8.7, JDK 17–22)
+>   and drop it into your project's addon.
+> - Tuned for the Abyss Moth ad stack (config-driven mediation/permissions/consent lives
+>   in the game project, not here).
+>
+> **Use at your own risk.** This fork is shaped around Abyss Moth's needs and is **not**
+> a general-purpose, supported release — but we do ship it in production and it works fine
+> for us. For the canonical, broadly-tested plugin, prefer upstream.
+
 ### Dev Note
 Warning!
-- CAS 4.7.3 tested only for godot 4.6.3 (steam version)
+- CAS 4.7.3 tested only for Godot 4.6.3 (Steam version)
+- Godot 3 is not supported in this fork (use upstream for Godot 3)
 
-# Godot CAS 4.7.3
+# Godot CAS 4.7.3 (Abyss Moth fork)
 [![CAS.AI](https://img.shields.io/badge/CAS.AI_SDK_4.7.3-blue?style=for-the-badge&logoSize=auto)](https://cas.ai/)
-[![Godot](https://img.shields.io/badge/Godot%20Engine-3.6.2-blue?style=for-the-badge&logo=godotengine&logoSize=auto)](https://godotengine.org/)
-[![Godot](https://img.shields.io/badge/Godot%20Engine-4.6.1-blue?style=for-the-badge&logo=godotengine&logoSize=auto)](https://godotengine.org/)
+[![Godot](https://img.shields.io/badge/Godot%20Engine-4.6.x-blue?style=for-the-badge&logo=godotengine&logoSize=auto)](https://godotengine.org/)
 [![GitHub License](https://img.shields.io/github/license/damnedpie/godot-cas?style=for-the-badge)](https://github.com/damnedpie/godot-cas/blob/main/LICENSE)
-[![GitHub Repo stars](https://img.shields.io/github/stars/damnedpie/godot-cas?style=for-the-badge&logo=github&logoSize=auto&color=%23FFD700)](https://github.com/damnedpie/godot-cas/stargazers)
 
-CAS SDK 4.7.3 Android plugin for Godot. Built on Godot 3.6.2 / Godot 4.6.1 dependency.
+CAS SDK 4.7.3 Android plugin for Godot. **Godot 4 only** (built against the Godot 4.6.x
+Android library). For Godot 3 use [upstream](https://github.com/damnedpie/godot-cas).
 
 [**Official Docs**](https://docs.page/cleveradssolutions/docs/general)
 
@@ -19,7 +41,7 @@ CAS SDK 4.7.3 Android plugin for Godot. Built on Godot 3.6.2 / Godot 4.6.1 depen
 
 #### Option 1: Manual
 
-1. Add plugin files (.gd, .gdap, .aar) from `godot3` or `godot4` folder into your project's `android/plugins`.
+1. Add plugin files (.gd, .gdap, .aar) from the `godot4` folder into your project's `android/plugins`.
 
 2. Add `GodotCas.gd` as a singleton (autoload) to your project.
 

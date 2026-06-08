@@ -1,6 +1,6 @@
 ext.zipName = "godot-cas"
 ext.pluginVersionName = "4.7.3"
-ext.pluginVersionCode = 2
+ext.pluginVersionCode = 3
 
 import groovy.json.JsonSlurper;
 
@@ -52,7 +52,6 @@ tasks.register('parseAdaptersList') {
 
 tasks.register('buildGithubRelease', Zip) {
     group = "build"
-    dependsOn getChildProjects().get("godot3").buildIntoRelease
     dependsOn getChildProjects().get("godot4").buildIntoRelease
     dependsOn tasks.parseAdaptersList
     from([rootDir.absolutePath, 'release'].join(File.separator))
