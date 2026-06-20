@@ -10,8 +10,8 @@
 #   2) если задан GODOT_CAS_ADDON_DIR — туда (для любого проекта);
 #      иначе — в addon проекта MurderDronesCatClicker по умолчанию.
 #
-# Требования: Android SDK (ANDROID_HOME / ~/Library/Android/sdk), JDK 17–22
-# (Gradle 8.7 не дружит с JDK 25). NDK версия указана в godot4/build.gradle.
+# Требования: Android SDK (ANDROID_HOME / ~/Library/Android/sdk), JDK 17–21.
+# Gradle 8.7 на этой машине не дружит с JDK 22/25. NDK версия указана в godot4/build.gradle.
 # ─────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
 
@@ -22,8 +22,13 @@ DEFAULT_ADDON_DIR="/Users/rimurutempest/RimuruDev/GodotProjects/MurderDronesCatC
 ADDON_DIR="${GODOT_CAS_ADDON_DIR:-$DEFAULT_ADDON_DIR}"
 
 export ANDROID_HOME="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-$HOME/Library/Android/sdk}}"
-if [[ -z "${JAVA_HOME:-}" ]] && command -v /usr/libexec/java_home >/dev/null 2>&1; then
-  export JAVA_HOME="$(/usr/libexec/java_home -v 22 2>/dev/null || /usr/libexec/java_home -v 17 2>/dev/null || /usr/libexec/java_home 2>/dev/null || true)"
+if command -v /usr/libexec/java_home >/dev/null 2>&1; then
+  export JAVA_HOME="$(
+    /usr/libexec/java_home -v 21 2>/dev/null \
+      || /usr/libexec/java_home -v 17 2>/dev/null \
+      || /usr/libexec/java_home 2>/dev/null \
+      || true
+  )"
 fi
 
 echo "[CAS] FORK_DIR=$FORK_DIR"

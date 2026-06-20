@@ -11,7 +11,7 @@
 > - Native VPN detection: `isVpnActive()` (+ existing `isWifiOrMobileInternetEnabled()`),
 >   handy to gate/adjust ad logic on the game side.
 > - Godot 3 removed — leaner, Godot 4 only.
-> - `rebuild_aar.command` — one command to rebuild the Godot 4 AAR (Gradle 8.7, JDK 17–22)
+> - `rebuild_aar.command` — one command to rebuild the Godot 4 AAR (Gradle 8.7, JDK 17–21)
 >   and drop it into your project's addon.
 > - Tuned for the Abyss Moth ad stack (config-driven mediation/permissions/consent lives
 >   in the game project, not here).
@@ -22,15 +22,15 @@
 
 ### Dev Note
 Warning!
-- CAS 4.7.3 tested only for Godot 4.6.3 (Steam version)
+- CAS 4.7.4 tested only for Godot 4.6.3 (Steam version)
 - Godot 3 is not supported in this fork (use upstream for Godot 3)
 
-# Godot CAS 4.7.3 (Abyss Moth fork)
-[![CAS.AI](https://img.shields.io/badge/CAS.AI_SDK_4.7.3-blue?style=for-the-badge&logoSize=auto)](https://cas.ai/)
+# Godot CAS 4.7.4 (Abyss Moth fork)
+[![CAS.AI](https://img.shields.io/badge/CAS.AI_SDK_4.7.4-blue?style=for-the-badge&logoSize=auto)](https://cas.ai/)
 [![Godot](https://img.shields.io/badge/Godot%20Engine-4.6.x-blue?style=for-the-badge&logo=godotengine&logoSize=auto)](https://godotengine.org/)
 [![GitHub License](https://img.shields.io/github/license/damnedpie/godot-cas?style=for-the-badge)](https://github.com/damnedpie/godot-cas/blob/main/LICENSE)
 
-CAS SDK 4.7.3 Android plugin for Godot. **Godot 4 only** (built against the Godot 4.6.x
+CAS SDK 4.7.4 Android plugin for Godot. **Godot 4 only** (built against the Godot 4.6.x
 Android library). For Godot 3 use [upstream](https://github.com/damnedpie/godot-cas).
 
 [**Official Docs**](https://docs.page/cleveradssolutions/docs/general)
