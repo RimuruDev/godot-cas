@@ -38,48 +38,119 @@ The compile target is the API the AAR links against, not a floor on your engine 
 
 ## Rebuilding / updating
 
-| Platform | How |
-|----------|-----|
-| macOS    | double-click `update.command` |
-| Windows  | double-click `update.bat` |
-| Linux    | `./update.sh` |
+### Quick start
 
-All three are thin launchers over `tools/cas.py`, which:
+| Platform | Double-click        | From a terminal                |
+|----------|---------------------|--------------------------------|
+| macOS    | `update.command`    | `./update.sh` or `python3 tools/cas.py update` |
+| Windows  | `update.bat`        | `py -3 tools\cas.py update`    |
+| Linux    | —                   | `./update.sh` or `python3 tools/cas.py update` |
 
-1. reads the CAS SDK version from CAS's live mediation list (and cross-checks it against
-   the [CAS-Android releases](https://github.com/cleveradssolutions/CAS-Android/releases),
-   ignoring pre-releases);
-2. verifies the toolchain — JDK 17–21 (Gradle 8.7 will not run on 22+) and the Android
-   SDK, offering to install missing SDK packages;
-3. regenerates `GodotCas.gdap` from that mediation list;
-4. builds both AARs and installs the Godot 4 one into a game addon;
-5. asks — never assumes — before committing, tagging, pushing and publishing a release.
+The launchers are thin wrappers: they locate Python, then hand over to `tools/cas.py`.
+`update.command` and `update.bat` also keep the window open so you can read the result.
+Everything below works identically on all three platforms.
 
-Other entry points:
+### What `update` does
+
+1. Reads the CAS SDK version from CAS's live mediation list and cross-checks it against the
+   [CAS-Android releases](https://github.com/cleveradssolutions/CAS-Android/releases),
+   ignoring pre-releases.
+2. Verifies the toolchain and offers to install missing Android SDK packages.
+3. Regenerates `GodotCas.gdap` from that mediation list.
+4. Builds both AARs and installs the Godot 4 one into a game addon.
+5. Asks — never assumes — before committing, tagging, pushing or publishing.
+
+Why the mediation list and not the GitHub release list: adapter versions are keyed to the
+list. If CAS-Android publishes 4.7.5 before the list catches up, the 4.7.5 adapters do not
+exist yet and pinning it would mismatch them. The tool checks both and warns on a mismatch.
+
+### Commands
+
+| Command   | What it does                                            |
+|-----------|---------------------------------------------------------|
+| `check`   | Report versions and toolchain. Changes nothing.         |
+| `update`  | Build both AARs, install into the addon, offer to publish. Default when a launcher is double-clicked. |
+| `release` | Build the zip, commit, tag, push, create the GitHub release. |
+
+### Options
+
+| Option              | Applies to | Meaning |
+|---------------------|-----------|---------|
+| `--yes`             | all       | Answer every prompt with yes. Unattended runs still stop on real errors. |
+| `--no-release`      | `update`  | Build and install only; never offer to publish. |
+| `--cas <ver>`       | `update`  | Force a CAS SDK version instead of the mediation list's. Downgrades ask for confirmation. |
+| `--godot4 <ver>`    | `update`  | Move the Godot 4 compile target, e.g. `4.7.1`. Verified against Maven Central first. |
+| `--godot3 <ver>`    | `update`  | Move the Godot 3 compile target, e.g. `3.6.2`. |
+| `--addon-dir <dir>` | `update`  | Install into this `addons/godot_cas/android` directory. |
+| `--bump`            | `release` | Increment the fork revision before publishing. |
 
 ```bash
-python3 tools/cas.py check                # report versions and toolchain, change nothing
-python3 tools/cas.py update --no-release   # build and install only
-python3 tools/cas.py update --godot4 4.7.1 # move the Godot 4 compile target
-python3 tools/cas.py release --bump        # publish, incrementing the fork revision
+python3 tools/cas.py check                   # versions + toolchain, no changes
+python3 tools/cas.py update --no-release     # build and install only
+python3 tools/cas.py update --godot4 4.7.1   # move the Godot 4 compile target
+python3 tools/cas.py release --bump          # publish, incrementing the fork revision
 ```
 
-To install into a project, point the tool at its addon once — this file is gitignored, so
-personal paths never land in the repo:
+### Requirements
+
+| Need         | Version | Notes |
+|--------------|---------|-------|
+| JDK          | 17–21   | Gradle 8.7 refuses to run on 22+. The tool finds a supported JDK itself and tells you if there is none. |
+| Android SDK  | platform 35, build-tools 35.0.0 | Missing packages are offered for install via `sdkmanager`. |
+| Python       | 3.9+    | Standard library only, no pip install. Verified on 3.9 and 3.14. |
+
+```bash
+# macOS
+brew install --cask temurin@21          # JDK; python3 ships with Xcode CLT or `brew install python`
+# Linux
+sdk install java 21-tem                 # or your distro's temurin-21-jdk package
+# Windows
+# JDK: https://adoptium.net/temurin/releases/?version=21
+# Python: https://www.python.org/downloads/ (tick "Add python.exe to PATH")
+```
+
+The Android SDK comes from Android Studio, or from the command line tools. `ANDROID_HOME`
+is honoured; otherwise the platform default is used (`~/Library/Android/sdk` on macOS,
+`~/Android/Sdk` on Linux, `%LOCALAPPDATA%\Android\Sdk` on Windows).
+
+### Installing into your project
+
+Point the tool at your addon once. The file is gitignored, so personal paths never land in
+the repo:
 
 ```jsonc
 // cas.local.json
 { "addon_dir": "/path/to/YourGame/addons/godot_cas/android" }
 ```
 
-`GODOT_CAS_ADDON_DIR` and `--addon-dir` override it.
+`--addon-dir` beats `GODOT_CAS_ADDON_DIR`, which beats `cas.local.json`. With none of them
+set, a single sibling checkout containing `addons/godot_cas/android` is auto-detected;
+otherwise the install step is skipped and the AARs are left in `release/`.
 
-### Versioning
+Installing also rewrites the consuming project's `godot_cas_export_plugin.gd`, `plugin.cfg`
+and `README_RU.md` so their pinned adapter versions match the AAR.
+
+### Versions
+
+| Component            | Version         | Set in |
+|----------------------|-----------------|--------|
+| CAS SDK              | 4.7.4           | `build.gradle` → `pluginVersionName` |
+| Fork revision        | 2               | `build.gradle` → `pluginVersionCode` |
+| Godot 4 compile target | 4.7.1.stable  | `godot4/build.gradle` → `ext.godotVersion` |
+| Godot 3 compile target | 3.6.2.stable  | `godot3/build.gradle` → `ext.godotVersion` |
+| compileSdk / targetSdk | 35            | `godot*/build.gradle` |
+| minSdk               | 24              | `godot*/build.gradle` |
+| Java source/target   | 17              | `godot*/build.gradle` |
+| NDK                  | 28.1.13356709   | `godot*/build.gradle` |
+| Build tools          | 35.0.0          | `godot*/build.gradle` |
+| Android Gradle Plugin| 8.6.1           | `godot*/build.gradle` |
+| Gradle               | 8.7             | `gradle/wrapper/gradle-wrapper.properties` |
 
 `pluginVersionName` tracks the CAS SDK. `pluginVersionCode` is **this fork's** revision: it
 resets to 1 when the SDK version moves and increments on every fork rebuild of the same SDK.
 It is deliberately never synced from upstream — upstream's revision counts upstream's
-rebuilds, not ours. Same for `godotVersion`. Releases are tagged `v<sdk>-rev<n>`.
+rebuilds, not ours. Same for `godotVersion`. Releases are tagged `v<sdk>-rev<n>`, so the
+current one is `v4.7.4-rev2`.
 
 ## Setup
 
@@ -548,5 +619,13 @@ You can check if user has WIFI/Mobile traffic enabled on their device. This DOES
 ```gdscript
 # Returns true if the device has WIFI or Mobile traffic enabled. This doesn't guarantee real internet connection.
 isWifiOrMobileInternetEnabled() -> bool
+```
 
+**Fork addition.** You can also check whether any active network runs over a VPN transport.
+Ad revenue is geo-dependent, so a VPN skews fill rate and eCPM — this is meant for noticing
+that case, not for blocking ads. Available on both Godot 3 and Godot 4; it needs no runtime
+API-level guard, since the underlying calls are API 21+ and `minSdk` here is 24.
+```gdscript
+# Returns true if any active network uses a VPN transport.
+isVpnActive() -> bool
 ```

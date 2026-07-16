@@ -36,52 +36,120 @@ consent flow, COPPA/audience, Tenjin и т.д. Новых публичных м�
 
 ## Пересборка / обновление
 
-| Платформа | Как |
-|-----------|-----|
-| macOS     | двойной клик по `update.command` |
-| Windows   | двойной клик по `update.bat` |
-| Linux     | `./update.sh` |
+### Быстрый старт
 
-Все три — тонкие обёртки над `tools/cas.py`, который:
+| Платформа | Двойной клик     | Из терминала |
+|-----------|------------------|--------------|
+| macOS     | `update.command` | `./update.sh` или `python3 tools/cas.py update` |
+| Windows   | `update.bat`     | `py -3 tools\cas.py update` |
+| Linux     | —                | `./update.sh` или `python3 tools/cas.py update` |
 
-1. берёт версию CAS SDK из живого списка медиации CAS и сверяет её с
+Лаунчеры — тонкие обёртки: находят Python и передают управление в `tools/cas.py`.
+`update.command` и `update.bat` дополнительно держат окно открытым, чтобы можно было
+прочитать результат. Всё, что ниже, работает одинаково на всех трёх платформах.
+
+### Что делает `update`
+
+1. Берёт версию CAS SDK из живого списка медиации CAS и сверяет её с
    [релизами CAS-Android](https://github.com/cleveradssolutions/CAS-Android/releases),
-   игнорируя пре-релизы;
-2. проверяет тулчейн — JDK 17–21 (Gradle 8.7 не запустится на 22+) и Android SDK,
-   предлагая доустановить недостающие пакеты;
-3. перегенерирует `GodotCas.gdap` из этого же списка;
-4. собирает оба AAR и ставит godot4-версию в аддон игры;
-5. **спрашивает** перед коммитом, тегом, пушем и публикацией релиза.
+   игнорируя пре-релизы.
+2. Проверяет тулчейн и предлагает доустановить недостающие пакеты Android SDK.
+3. Перегенерирует `GodotCas.gdap` из этого же списка.
+4. Собирает оба AAR и ставит godot4-версию в аддон игры.
+5. **Спрашивает** перед коммитом, тегом, пушем и публикацией — молча ничего не делает.
 
 Почему список медиации, а не релизы GitHub: версии адаптеров привязаны именно к нему.
-Если CAS-Android уже выложил 4.7.5, а список ещё отдаёт 4.7.4 — адаптеры для 4.7.5 не
-опубликованы, и пиниться на неё рано. Инструмент это заметит и предупредит.
+Если CAS-Android выложил 4.7.5, а список ещё отдаёт 4.7.4 — адаптеров под 4.7.5 ещё нет,
+и пиниться на неё рано. Инструмент проверяет оба источника и предупредит о расхождении.
 
-Прочие команды:
+### Команды
+
+| Команда   | Что делает |
+|-----------|------------|
+| `check`   | Показать версии и тулчейн. Ничего не меняет. |
+| `update`  | Собрать оба AAR, поставить в аддон, предложить публикацию. Именно она запускается при двойном клике. |
+| `release` | Собрать зип, закоммитить, затегать, запушить, создать GitHub release. |
+
+### Опции
+
+| Опция               | К чему    | Смысл |
+|---------------------|-----------|-------|
+| `--yes`             | ко всем   | Отвечать «да» на все вопросы. На реальных ошибках всё равно остановится. |
+| `--no-release`      | `update`  | Только собрать и поставить, публикацию не предлагать. |
+| `--cas <ver>`       | `update`  | Форсировать версию CAS SDK вместо той, что в списке медиации. Даунгрейд переспросит. |
+| `--godot4 <ver>`    | `update`  | Сменить версию компиляции Godot 4, например `4.7.1`. Сначала проверяется наличие на Maven Central. |
+| `--godot3 <ver>`    | `update`  | Сменить версию компиляции Godot 3, например `3.6.2`. |
+| `--addon-dir <dir>` | `update`  | Ставить в этот каталог `addons/godot_cas/android`. |
+| `--bump`            | `release` | Увеличить ревизию форка перед публикацией. |
 
 ```bash
-python3 tools/cas.py check                  # показать версии и тулчейн, ничего не менять
-python3 tools/cas.py update --no-release    # только собрать и поставить
-python3 tools/cas.py update --godot4 4.7.1  # сменить версию компиляции Godot 4
-python3 tools/cas.py release --bump         # опубликовать, увеличив ревизию форка
+python3 tools/cas.py check                   # версии и тулчейн, без изменений
+python3 tools/cas.py update --no-release     # только собрать и поставить
+python3 tools/cas.py update --godot4 4.7.1   # сменить версию компиляции Godot 4
+python3 tools/cas.py release --bump          # опубликовать, увеличив ревизию форка
 ```
 
-Чтобы ставить AAR в проект, укажи путь к аддону один раз. Файл в `.gitignore`, поэтому
-личные пути в репозиторий не попадают:
+### Что нужно на машине
+
+| Что          | Версия  | Примечание |
+|--------------|---------|------------|
+| JDK          | 17–21   | Gradle 8.7 **не запустится** на 22+. Инструмент сам ищет подходящий JDK и скажет, если его нет. |
+| Android SDK  | platform 35, build-tools 35.0.0 | Недостающие пакеты предложит доставить через `sdkmanager`. |
+| Python       | 3.9+    | Только стандартная библиотека, `pip install` не нужен. Проверено на 3.9 и 3.14. |
+
+```bash
+# macOS
+brew install --cask temurin@21          # JDK; python3 идёт с Xcode CLT либо `brew install python`
+# Linux
+sdk install java 21-tem                 # либо пакет temurin-21-jdk из репозитория дистрибутива
+# Windows
+# JDK: https://adoptium.net/temurin/releases/?version=21
+# Python: https://www.python.org/downloads/ (отметить «Add python.exe to PATH»)
+```
+
+Android SDK ставится через Android Studio либо через command line tools. `ANDROID_HOME`
+учитывается; если не задан — берётся путь по умолчанию для платформы
+(`~/Library/Android/sdk` на macOS, `~/Android/Sdk` на Linux,
+`%LOCALAPPDATA%\Android\Sdk` на Windows).
+
+### Установка в свой проект
+
+Путь к аддону указывается один раз. Файл в `.gitignore`, поэтому личные пути в репозиторий
+не попадают:
 
 ```jsonc
 // cas.local.json
 { "addon_dir": "/path/to/YourGame/addons/godot_cas/android" }
 ```
 
-Переопределяется через `GODOT_CAS_ADDON_DIR` или `--addon-dir`.
+Приоритет: `--addon-dir` → `GODOT_CAS_ADDON_DIR` → `cas.local.json`. Если не задано ничего,
+инструмент попробует сам найти единственный соседний проект с `addons/godot_cas/android`;
+не нашёл — шаг установки пропускается, AAR останутся в `release/`.
 
-## Версионирование
+При установке заодно переписываются `godot_cas_export_plugin.gd`, `plugin.cfg` и
+`README_RU.md` в проекте, чтобы прибитые там версии адаптеров совпадали с AAR.
+
+## Версии
+
+| Компонент              | Версия          | Где задано |
+|------------------------|-----------------|------------|
+| CAS SDK                | 4.7.4           | `build.gradle` → `pluginVersionName` |
+| Ревизия форка          | 2               | `build.gradle` → `pluginVersionCode` |
+| Godot 4, версия компиляции | 4.7.1.stable | `godot4/build.gradle` → `ext.godotVersion` |
+| Godot 3, версия компиляции | 3.6.2.stable | `godot3/build.gradle` → `ext.godotVersion` |
+| compileSdk / targetSdk | 35              | `godot*/build.gradle` |
+| minSdk                 | 24              | `godot*/build.gradle` |
+| Java source/target     | 17              | `godot*/build.gradle` |
+| NDK                    | 28.1.13356709   | `godot*/build.gradle` |
+| Build tools            | 35.0.0          | `godot*/build.gradle` |
+| Android Gradle Plugin  | 8.6.1           | `godot*/build.gradle` |
+| Gradle                 | 8.7             | `gradle/wrapper/gradle-wrapper.properties` |
 
 `pluginVersionName` следует за версией CAS SDK. `pluginVersionCode` — ревизия **этого
 форка**: сбрасывается в 1 при смене версии SDK и растёт на каждую пересборку форка на той
 же SDK. Он намеренно **не** синхронизируется с upstream — там счётчик считает их
-пересборки, а не наши. То же самое с `godotVersion`. Теги релизов — `v<sdk>-rev<n>`.
+пересборки, а не наши. То же самое с `godotVersion`. Теги релизов — `v<sdk>-rev<n>`,
+то есть текущий это `v4.7.4-rev2`.
 
 ## Что использовать — оригинал или форк?
 
