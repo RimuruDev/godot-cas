@@ -5,3 +5,7 @@ local.properties
 release/github-meta.txt
 release/*.zip
 libs/
+# Per-machine addon path for tools/cas.py — keeps personal paths out of the repo.
+cas.local.json
+__pycache__/
+*.pyc

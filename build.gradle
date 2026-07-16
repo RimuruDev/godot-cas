@@ -1,6 +1,8 @@
 ext.zipName = "godot-cas"
 ext.pluginVersionName = "4.7.4"
-ext.pluginVersionCode = 1
+// Fork revision. Independent of upstream's counter: reset to 1 when pluginVersionName
+// changes, otherwise +1 per published fork rebuild. Never sync this from upstream.
+ext.pluginVersionCode = 2
 
 import groovy.json.JsonSlurper;
 
@@ -52,13 +54,15 @@ tasks.register('parseAdaptersList') {
 
 tasks.register('buildGithubRelease', Zip) {
     group = "build"
+    dependsOn getChildProjects().get("godot3").buildIntoRelease
     dependsOn getChildProjects().get("godot4").buildIntoRelease
     dependsOn tasks.parseAdaptersList
     from([rootDir.absolutePath, 'release'].join(File.separator))
     include("**/*.gd", "**/*.gdap", "**/*.aar", "adapters-list.txt")
     archiveFileName = "${zipName}-${pluginVersionName}-rev${pluginVersionCode}.zip"
     destinationDirectory = file([rootDir.absolutePath, 'release'].join(File.separator))
+    // Release title + tag, in this fork's scheme (tools/cas.py publishes with these).
     def metaTxt = new File([rootDir.absolutePath, 'release', "github-meta.txt"].join(File.separator))
-    metaTxt.text = "SDK ${pluginVersionName} rev.${pluginVersionCode}"
-    metaTxt.text += "\nSDK${pluginVersionName}rev${pluginVersionCode}"
+    metaTxt.text = "CAS SDK ${pluginVersionName} rev.${pluginVersionCode}"
+    metaTxt.text += "\nv${pluginVersionName}-rev${pluginVersionCode}"
 }

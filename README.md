@@ -3,16 +3,15 @@
 > This is a **fork** of [damnedpie/godot-cas](https://github.com/damnedpie/godot-cas),
 > maintained by Abyss Moth (RimuruDev) for our own game projects.
 >
-> **Godot 3 is NOT supported here.** The `godot3` module was removed — this fork is
-> Godot 4 only. If you need Godot 3 support, use the upstream repo:
-> https://github.com/damnedpie/godot-cas
->
-> **What this fork adds on top of upstream:**
-> - Native VPN detection: `isVpnActive()` (+ existing `isWifiOrMobileInternetEnabled()`),
->   handy to gate/adjust ad logic on the game side.
-> - Godot 3 removed — leaner, Godot 4 only.
-> - `rebuild_aar.command` — one command to rebuild the Godot 4 AAR (Gradle 8.7, JDK 17–21)
->   and drop it into your project's addon.
+> **What this fork changes on top of upstream:**
+> - Native VPN detection: `isVpnActive()` on both Godot 3 and Godot 4 (alongside the
+>   existing `isWifiOrMobileInternetEnabled()`), handy to gate/adjust ad logic on the
+>   game side. Ad revenue is geo-dependent, so a VPN skews fill rate and eCPM.
+> - The `AD_ID` permission is **declared** rather than stripped — upstream tags it
+>   `tools:node="remove"`, but ads need the advertising id on Android 13+.
+>   `ACCESS_COARSE_LOCATION` and `READ_PHONE_STATE` stay removed.
+> - Godot 4 builds against the current Godot **4.7.1** Android library (upstream: 4.6.3).
+> - One double-click updater for macOS / Windows / Linux — see *Rebuilding* below.
 > - Tuned for the Abyss Moth ad stack (config-driven mediation/permissions/consent lives
 >   in the game project, not here).
 >
@@ -20,20 +19,67 @@
 > a general-purpose, supported release — but we do ship it in production and it works fine
 > for us. For the canonical, broadly-tested plugin, prefer upstream.
 
-### Dev Note
-Warning!
-- CAS 4.7.4 tested only for Godot 4.6.3 (Steam version)
-- Godot 3 is not supported in this fork (use upstream for Godot 3)
-
 # Godot CAS 4.7.4 (Abyss Moth fork)
 [![CAS.AI](https://img.shields.io/badge/CAS.AI_SDK_4.7.4-blue?style=for-the-badge&logoSize=auto)](https://cas.ai/)
-[![Godot](https://img.shields.io/badge/Godot%20Engine-4.6.x-blue?style=for-the-badge&logo=godotengine&logoSize=auto)](https://godotengine.org/)
+[![Godot](https://img.shields.io/badge/Godot%20Engine-4.7.x%20%7C%203.6.x-blue?style=for-the-badge&logo=godotengine&logoSize=auto)](https://godotengine.org/)
 [![GitHub License](https://img.shields.io/github/license/damnedpie/godot-cas?style=for-the-badge)](https://github.com/damnedpie/godot-cas/blob/main/LICENSE)
 
-CAS SDK 4.7.4 Android plugin for Godot. **Godot 4 only** (built against the Godot 4.6.x
-Android library). For Godot 3 use [upstream](https://github.com/damnedpie/godot-cas).
+CAS SDK 4.7.4 Android plugin for Godot. Ships both modules:
+
+| Module   | Compiled against                  | Plugin API |
+|----------|-----------------------------------|------------|
+| `godot4` | `org.godotengine:godot:4.7.1.stable` | v2 |
+| `godot3` | `org.godotengine:godot:3.6.2.stable` | v1 |
+
+The compile target is the API the AAR links against, not a floor on your engine version —
+`compileOnly` means the plugin binds to whatever Godot ships in your export template.
 
 [**Official Docs**](https://docs.page/cleveradssolutions/docs/general)
+
+## Rebuilding / updating
+
+| Platform | How |
+|----------|-----|
+| macOS    | double-click `update.command` |
+| Windows  | double-click `update.bat` |
+| Linux    | `./update.sh` |
+
+All three are thin launchers over `tools/cas.py`, which:
+
+1. reads the CAS SDK version from CAS's live mediation list (and cross-checks it against
+   the [CAS-Android releases](https://github.com/cleveradssolutions/CAS-Android/releases),
+   ignoring pre-releases);
+2. verifies the toolchain — JDK 17–21 (Gradle 8.7 will not run on 22+) and the Android
+   SDK, offering to install missing SDK packages;
+3. regenerates `GodotCas.gdap` from that mediation list;
+4. builds both AARs and installs the Godot 4 one into a game addon;
+5. asks — never assumes — before committing, tagging, pushing and publishing a release.
+
+Other entry points:
+
+```bash
+python3 tools/cas.py check                # report versions and toolchain, change nothing
+python3 tools/cas.py update --no-release   # build and install only
+python3 tools/cas.py update --godot4 4.7.1 # move the Godot 4 compile target
+python3 tools/cas.py release --bump        # publish, incrementing the fork revision
+```
+
+To install into a project, point the tool at its addon once — this file is gitignored, so
+personal paths never land in the repo:
+
+```jsonc
+// cas.local.json
+{ "addon_dir": "/path/to/YourGame/addons/godot_cas/android" }
+```
+
+`GODOT_CAS_ADDON_DIR` and `--addon-dir` override it.
+
+### Versioning
+
+`pluginVersionName` tracks the CAS SDK. `pluginVersionCode` is **this fork's** revision: it
+resets to 1 when the SDK version moves and increments on every fork rebuild of the same SDK.
+It is deliberately never synced from upstream — upstream's revision counts upstream's
+rebuilds, not ours. Same for `godotVersion`. Releases are tagged `v<sdk>-rev<n>`.
 
 ## Setup
 

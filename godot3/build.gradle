@@ -2,7 +2,7 @@ plugins {
 	id("com.android.library") version("8.6.1")
 }
 
-ext.godotVersion = "4.7.1"
+ext.godotVersion = "3.6.2"
 
 android {
 	namespace "com.onecat.godotcas"
@@ -47,5 +47,5 @@ tasks.register('buildIntoRelease', Copy) {
 	dependsOn rootProject.tasks.parseAdaptersList
 	from([buildDir.absolutePath, 'outputs', 'aar'].join(File.separator))
 	include("GodotCas.${pluginVersionName}.release.aar")
-	into([rootDir.absolutePath, 'release/godot4'].join(File.separator))
+	into([rootDir.absolutePath, 'release/godot3'].join(File.separator))
 }
