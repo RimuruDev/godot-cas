@@ -606,7 +606,14 @@ def resolve_addon_dir(explicit: str | None) -> Path | None:
                 raise CasError(f"cas.local.json addon_dir does not exist: {path}")
             return path
 
-    matches = sorted(FORK_DIR.parent.glob("*/addons/godot_cas/android"))
+    # Skip the copy that ships inside this repo (addons/godot_cas is the
+    # distributable addon consumed via abyss-moth-kit): it is a build output,
+    # not somebody's game, and would otherwise show up as a phantom candidate.
+    matches = sorted(
+        match
+        for match in FORK_DIR.parent.glob("*/addons/godot_cas/android")
+        if FORK_DIR not in match.parents
+    )
     if len(matches) == 1:
         con.info(f"auto-detected addon: {matches[0]}")
         return matches[0]
@@ -821,6 +828,15 @@ def cmd_update(args: argparse.Namespace) -> int:
     else:
         install_into_addon(addon_dir, built["godot4"])
         update_game_addon(addon_dir, target_name, aar_name, state["dependencies"])
+
+    # The addon shipped from this repo is what abyss-moth-kit installs for the
+    # rest of the studio. Refresh it from the same build, otherwise it silently
+    # keeps serving whatever AAR happened to be committed last.
+    repo_addon_dir = FORK_DIR / "addons" / "godot_cas" / "android"
+    if repo_addon_dir.is_dir():
+        con.step("Refreshing the distributable addon in this repo")
+        install_into_addon(repo_addon_dir, built["godot4"])
+        update_game_addon(repo_addon_dir, target_name, aar_name, state["dependencies"])
 
     con.step("Done")
     con.ok(f"CAS {target_name} rev {target_code} built and installed")
