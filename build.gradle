@@ -2,7 +2,7 @@ ext.zipName = "godot-cas"
 ext.pluginVersionName = "4.7.4"
 // Fork revision. Independent of upstream's counter: reset to 1 when pluginVersionName
 // changes, otherwise +1 per published fork rebuild. Never sync this from upstream.
-ext.pluginVersionCode = 2
+ext.pluginVersionCode = 3
 
 import groovy.json.JsonSlurper;
 
