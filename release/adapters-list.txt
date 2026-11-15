@@ -1,40 +1,75 @@
-CAS network adapters for SDK 4.7.4
+CAS network adapters for SDK 4.8.3
 
 Parsed from https://github.com/cleveradssolutions/CAS-Unity/blob/master/Editor/BuildConfig/CASAndroidMediation.list
 
-OptimalAds dependencies: 
-	"com.cleveradssolutions:cas-sdk:4.7.4",
-	"com.cleveradssolutions:ironsource:9.4.3.1",
-	"com.cleveradssolutions:unity:4.18.1.0",
-	"com.cleveradssolutions:google:25.2.0.4",
-	"com.cleveradssolutions:vungle:7.7.4.1",
-	"com.cleveradssolutions:inmobi:11.3.0.2",
-	"com.cleveradssolutions:mintegral:17.1.61.2",
-	"com.cleveradssolutions:applovin:13.6.3.0",
-	"com.cleveradssolutions:pangle:8.1.0.4",
-	"com.cleveradssolutions:bigo:5.9.0.0",
-	"com.cleveradssolutions:yango:8.1.0.0",
-	"com.cleveradssolutions:facebook:6.21.0.1",
-	"com.cleveradssolutions:ysonetwork:1.3.6.0",
+OptimalAds dependencies:
+	"com.cleveradssolutions:cas-sdk:4.8.3",
+	"com.cleveradssolutions:ironsource:9.6.0.1",
+	"com.cleveradssolutions:unity:4.20.1.0",
+	"com.cleveradssolutions:google:25.5.0.0",
+	"com.cleveradssolutions:googlenext:1.6.0.0",
+	"com.cleveradssolutions:vungle:7.7.9.0",
+	"com.cleveradssolutions:inmobi:11.5.0.1",
+	"com.cleveradssolutions:mintegral:17.1.81.1",
+	"com.cleveradssolutions:applovin:13.6.4.1",
+	"com.cleveradssolutions:pangle:8.3.0.5",
+	"com.cleveradssolutions:bigo:6.1.0.0",
+	"com.cleveradssolutions:yango:8.5.0.0",
+	"com.cleveradssolutions:facebook:6.22.0.1",
+	"com.cleveradssolutions:ysonetwork:1.3.9.0",
 	"com.cleveradssolutions:cas-exchange:4.6.6",
-	"com.cleveradssolutions:maticoo:1.8.6.3",
-	"com.cleveradssolutions:monetrix:1.2.0.2",
+	"com.cleveradssolutions:monetrix:1.4.0.5",
+	"com.cleveradssolutions:moloco:4.12.0.0",
 
-OptimalAds repositories: 
+OptimalAds repositories:
 	"https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea",
 	"https://artifact.bytedance.com/repository/pangle",
 	"https://ysonetwork.s3.eu-west-3.amazonaws.com/sdk/android",
 
-FamiliesAds dependencies: 
-	"com.cleveradssolutions:cas-sdk:4.7.4",
-	"com.cleveradssolutions:ironsource:9.4.3.1",
-	"com.cleveradssolutions:unity:4.18.1.0",
-	"com.cleveradssolutions:google:25.2.0.4",
-	"com.cleveradssolutions:vungle:7.7.4.1",
-	"com.cleveradssolutions:inmobi:11.3.0.2",
-	"com.cleveradssolutions:chartboost:9.12.0.0",
-	"com.cleveradssolutions:kidoz:10.1.7.0",
+FamiliesAds dependencies:
+	"com.cleveradssolutions:cas-sdk:4.8.3",
+	"com.cleveradssolutions:ironsource:9.6.0.1",
+	"com.cleveradssolutions:unity:4.20.1.0",
+	"com.cleveradssolutions:google:25.5.0.0",
+	"com.cleveradssolutions:googlenext:1.6.0.0",
+	"com.cleveradssolutions:vungle:7.7.9.0",
+	"com.cleveradssolutions:inmobi:11.5.0.1",
+	"com.cleveradssolutions:chartboost:9.14.1.0",
+	"com.cleveradssolutions:kidoz:10.1.9.0",
 
-FamiliesAds repositories: 
+FamiliesAds repositories:
 	"https://cboost.jfrog.io/artifactory/chartboost-ads/",
+
+PublishingAds dependencies:
+	"com.cleveradssolutions:cas-sdk:4.8.3",
+	"com.cleveradssolutions:ironsource:9.6.0.1",
+	"com.cleveradssolutions:unity:4.20.1.0",
+	"com.cleveradssolutions:google:25.5.0.0",
+	"com.cleveradssolutions:googlenext:1.6.0.0",
+	"com.cleveradssolutions:vungle:7.7.9.0",
+	"com.cleveradssolutions:inmobi:11.5.0.1",
+	"com.cleveradssolutions:chartboost:9.14.1.0",
+	"com.cleveradssolutions:mintegral:17.1.81.1",
+	"com.cleveradssolutions:applovin:13.6.4.1",
+	"com.cleveradssolutions:pangle:8.3.0.5",
+	"com.cleveradssolutions:bigo:6.1.0.0",
+	"com.cleveradssolutions:yango:8.5.0.0",
+	"com.cleveradssolutions:facebook:6.22.0.1",
+	"com.cleveradssolutions:ysonetwork:1.3.9.0",
+	"com.cleveradssolutions:cas-exchange:4.6.6",
+	"com.cleveradssolutions:ogury:6.3.1.0",
+	"com.cleveradssolutions:monetrix:1.4.0.5",
+	"com.cleveradssolutions:moloco:4.12.0.0",
+
+PublishingAds repositories:
+	"https://cboost.jfrog.io/artifactory/chartboost-ads/",
+	"https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea",
+	"https://artifact.bytedance.com/repository/pangle",
+	"https://ysonetwork.s3.eu-west-3.amazonaws.com/sdk/android",
+	"https://maven.ogury.co",
+
+TenjinMMP dependencies:
+	"com.cleveradssolutions:cas-sdk:4.8.3",
+
+TenjinMMP repositories:
 

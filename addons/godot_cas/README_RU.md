@@ -1,6 +1,6 @@
 # Godot CAS — памятка (RU)
 
-Addon-обёртка над форком [godot-cas](https://github.com/RimuruDev/godot-cas) (CAS.ai SDK 4.7.4,
+Addon-обёртка над форком [godot-cas](https://github.com/RimuruDev/godot-cas) (CAS.ai SDK 4.8.3,
 Android). Подключает нативный синглтон `GodotCas` и через export-плагин добавляет
 рекламные SDK, репозитории, разрешения и AdMob App ID — **всё управляется конфигом**
 `res://abyss_moth/data/ads/default_ad_config.tres` (`AdConfig`).
@@ -93,7 +93,7 @@ bash rebuild_aar.command
 # или двойной клик в Finder
 ```
 
-Скрипт соберёт `godot4` AAR (Gradle 8.7, нужен JDK 17–21 и Android SDK) и положит его
+Скрипт соберёт `godot4` AAR (Gradle 8.11.1, нужен JDK 17–21 и Android SDK) и положит его
 в `release/godot4/` и в `addons/godot_cas/android/` этого проекта (или в `GODOT_CAS_ADDON_DIR`).
 
 После смены версии CAS обнови в `godot_cas_export_plugin.gd`:

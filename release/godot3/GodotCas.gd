@@ -117,11 +117,6 @@ func setTestAdMode(enabled:bool) -> void:
 func setTenjinKey(key:String) -> void:
 	_cas.setTenjinKey(key)
 
-# Call before initializeCas()
-# See https://docs.page/cleveradssolutions/docs/Android/Additional-Meta-AudienceNetwork-steps
-func setFacebookLDU(enabled:bool) -> void:
-	_cas.setFacebookLDU(enabled)
-
 # Specify what audience is the user in. See AUDIENCE enum.
 func setTaggedAudience(audienceType:int) -> void:
 	_cas.setTaggedAudience(audienceType)

@@ -1,8 +1,9 @@
 ext.zipName = "godot-cas"
-ext.pluginVersionName = "4.7.4"
+ext.pluginVersionName = "4.8.3"
 // Fork revision. Independent of upstream's counter: reset to 1 when pluginVersionName
 // changes, otherwise +1 per published fork rebuild. Never sync this from upstream.
-ext.pluginVersionCode = 3
+ext.pluginVersionCode = 1
+ext.kotlinVersion = "2.2.0"
 
 import groovy.json.JsonSlurper;
 
@@ -30,7 +31,7 @@ tasks.register('parseAdaptersList') {
         String repString = filter.get("name").concat(" repositories: \n")
         for (Map<String, Object> adapter : adapters) {
             int[] contains = filter.get("contains")
-            if (contains.contains(adapter.get("id"))) {
+            if (contains != null && contains.contains(adapter.get("id"))) {
                 Map<String, String> adapterLibs = adapter.get("libs")[0]
                 depString += "\t\""
                 depString += adapterLibs.get("name")

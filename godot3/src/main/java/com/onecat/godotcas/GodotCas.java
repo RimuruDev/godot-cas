@@ -7,9 +7,9 @@ import static com.onecat.godotcas.Utils.fieldsToDictionary;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -24,6 +24,7 @@ import com.cleversolutions.ads.*;
 import com.cleversolutions.ads.android.CAS;
 import com.cleversolutions.ads.android.CAS.ManagerBuilder;
 import com.cleversolutions.ads.android.CASBannerView;
+import com.facebook.ads.AdSettings;
 import com.tenjin.android.TenjinSDK;
 
 import org.godotengine.godot.Dictionary;
@@ -37,6 +38,7 @@ import java.util.Set;
 
 @SuppressWarnings({"unused"})
 public class GodotCas extends GodotPlugin {
+
 	public static final String TAG = "Godot CAS Plugin";
 	private FrameLayout godotLayout;
 
@@ -45,7 +47,6 @@ public class GodotCas extends GodotPlugin {
 	private boolean testAdMode = false;
 	private boolean useBuiltInConsentManager = true;
 	private boolean consentForceTesting = false;
-	private boolean fbLDUEnabled = false;
 	private int debugGeography = ConsentFlow.DebugGeography.DISABLED;
 	private final Set<String> testDevices = new HashSet<>();
 
@@ -76,10 +77,18 @@ public class GodotCas extends GodotPlugin {
 
 	@Override
 	public void onMainDestroy() {
-		if (interstitialAd != null) { interstitialAd.destroy(); }
-		if (rewardedAd != null) { rewardedAd.destroy(); }
-		if (bannerAd != null) { bannerAd.destroy(); }
-		if (appOpenAd != null) { appOpenAd.destroy(); }
+		if (interstitialAd != null) {
+			interstitialAd.destroy();
+		}
+		if (rewardedAd != null) {
+			rewardedAd.destroy();
+		}
+		if (bannerAd != null) {
+			bannerAd.destroy();
+		}
+		if (appOpenAd != null) {
+			appOpenAd.destroy();
+		}
 	}
 
 	@Override
@@ -142,11 +151,6 @@ public class GodotCas extends GodotPlugin {
 	@UsedByGodot
 	public void setTenjinKey(String key) {
 		tenjinKey = key;
-	}
-
-	@UsedByGodot
-	public void setFacebookLDU(boolean enabled) {
-		fbLDUEnabled = enabled;
 	}
 
 	@UsedByGodot
@@ -224,7 +228,9 @@ public class GodotCas extends GodotPlugin {
 	public void initializeCAS(String engineVersion) {
 		ManagerBuilder builder = CAS.buildManager()
 				.withCasId(getCasId())
-				.withConsentFlow(new ConsentFlow(useBuiltInConsentManager))
+				.withConsentFlow(new ConsentFlow(useBuiltInConsentManager).withDismissListener(
+						i -> checkMetaLDU())
+				)
 				.withTestAdMode(testAdMode)
 				.withFramework("Godot", engineVersion)
 				.withCompletionListener(initialConfiguration -> {
@@ -233,9 +239,12 @@ public class GodotCas extends GodotPlugin {
 					if (initError == null) {
 						initError = "";
 						isSdkInitialized = true;
+						checkMetaLDU();
 					}
 					String userCountryISO2 = initialConfiguration.getCountryCode();
-					if (userCountryISO2 == null) { userCountryISO2 = ""; }
+					if (userCountryISO2 == null) {
+						userCountryISO2 = "";
+					}
 					boolean protectionApplied = initialConfiguration.isConsentRequired();
 					int consentFlowStatus = initialConfiguration.getConsentFlowStatus();
 					emitSignal(Signals.INITIALIZATION_FINISHED, initError, userCountryISO2, protectionApplied, consentFlowStatus);
@@ -243,7 +252,6 @@ public class GodotCas extends GodotPlugin {
 		if (tenjinKey != null) {
 			builder.withMediationExtras("tenjin_key", tenjinKey);
 		}
-		builder.withMediationExtras("FB_dp", fbLDUEnabled ? "LDU" : "");
 		builder.build(getActivity());
 	}
 
@@ -264,6 +272,7 @@ public class GodotCas extends GodotPlugin {
 	public void initializeInterstitial() {
 		interstitialAd = new CASInterstitial(getCasId());
 		ScreenAdContentCallback adContentCallback = new ScreenAdContentCallback() {
+
 			@Override
 			public void onAdLoaded(AdContentInfo adContentInfo) {
 				emitSignal(Signals.INTERSTITIAL_LOADED, adContentInfoToDictionary(adContentInfo));
@@ -369,6 +378,7 @@ public class GodotCas extends GodotPlugin {
 	public void initializeRewarded() {
 		rewardedAd = new CASRewarded(casId);
 		ScreenAdContentCallback adContentCallback = new ScreenAdContentCallback() {
+
 			@Override
 			public void onAdLoaded(AdContentInfo adContentInfo) {
 				emitSignal(Signals.REWARDED_LOADED, adContentInfoToDictionary(adContentInfo));
@@ -401,6 +411,7 @@ public class GodotCas extends GodotPlugin {
 		};
 		rewardedAd.setContentCallback(adContentCallback);
 		OnAdImpressionListener impressionListener = new OnAdImpressionListener() {
+
 			@Override
 			public void onAdImpression(AdContentInfo adContentInfo) {
 				emitSignal(Signals.REWARDED_IMPRESSION, adContentInfoToDictionary(adContentInfo));
@@ -433,12 +444,15 @@ public class GodotCas extends GodotPlugin {
 			Log.w(TAG, "Rewarded is not initialized, can't showRewarded()");
 			return;
 		}
-		rewardedAd.show(getActivity(), new OnRewardEarnedListener() {
-			@Override
-			public void onUserEarnedReward(AdContentInfo adContentInfo) {
-				emitSignal(Signals.REWARD_EARNED, adContentInfoToDictionary(adContentInfo));
-			}
-		});
+		rewardedAd.show(
+				getActivity(), new OnRewardEarnedListener() {
+
+					@Override
+					public void onUserEarnedReward(AdContentInfo adContentInfo) {
+						emitSignal(Signals.REWARD_EARNED, adContentInfoToDictionary(adContentInfo));
+					}
+				}
+		);
 	}
 
 	@UsedByGodot
@@ -483,6 +497,7 @@ public class GodotCas extends GodotPlugin {
 		bannerAd.setSize(adSize);
 		bannerAd.setAdListener(createBannerCallbacks());
 		OnAdImpressionListener impressionListener = new OnAdImpressionListener() {
+
 			@Override
 			public void onAdImpression(AdContentInfo adContentInfo) {
 				emitSignal(Signals.BANNER_IMPRESSION, adContentInfoToDictionary(adContentInfo));
@@ -490,6 +505,7 @@ public class GodotCas extends GodotPlugin {
 		};
 		bannerAd.setOnImpressionListener(impressionListener);
 		runOnUiThread(new Runnable() {
+
 			@Override
 			public void run() {
 				getGodotLayout().removeAllViews();
@@ -504,6 +520,7 @@ public class GodotCas extends GodotPlugin {
 		bannerAd.setSize(AdSize.getAdaptiveBanner(getActivity(), maxWidthDpi));
 		bannerAd.setAdListener(createBannerCallbacks());
 		OnAdImpressionListener impressionListener = new OnAdImpressionListener() {
+
 			@Override
 			public void onAdImpression(AdContentInfo adContentInfo) {
 				emitSignal(Signals.BANNER_IMPRESSION, adContentInfoToDictionary(adContentInfo));
@@ -511,6 +528,7 @@ public class GodotCas extends GodotPlugin {
 		};
 		bannerAd.setOnImpressionListener(impressionListener);
 		runOnUiThread(new Runnable() {
+
 			@Override
 			public void run() {
 				getGodotLayout().removeAllViews();
@@ -547,6 +565,7 @@ public class GodotCas extends GodotPlugin {
 			return;
 		}
 		runOnUiThread(new Runnable() {
+
 			@Override
 			public void run() {
 				if (visible) {
@@ -601,6 +620,7 @@ public class GodotCas extends GodotPlugin {
 			return;
 		}
 		runOnUiThread(new Runnable() {
+
 			@Override
 			public void run() {
 				bannerAd.setX(x);
@@ -634,6 +654,7 @@ public class GodotCas extends GodotPlugin {
 	public void initializeAppOpenAd() {
 		appOpenAd = new CASAppOpen(casId);
 		ScreenAdContentCallback adContentCallback = new ScreenAdContentCallback() {
+
 			@Override
 			public void onAdLoaded(AdContentInfo adContentInfo) {
 				emitSignal(Signals.APP_OPEN_AD_LOADED, adContentInfoToDictionary(adContentInfo));
@@ -666,6 +687,7 @@ public class GodotCas extends GodotPlugin {
 		};
 		appOpenAd.setContentCallback(adContentCallback);
 		OnAdImpressionListener impressionListener = new OnAdImpressionListener() {
+
 			@Override
 			public void onAdImpression(AdContentInfo adContentInfo) {
 				emitSignal(Signals.APP_OPEN_AD_IMPRESSION, adContentInfoToDictionary(adContentInfo));
@@ -802,21 +824,28 @@ public class GodotCas extends GodotPlugin {
 		if (connectivityManager == null) {
 			return false;
 		}
-
-		//noinspection deprecation
-		Network[] networks = connectivityManager.getAllNetworks();
-		for (Network network : networks) {
+		for (Network network : connectivityManager.getAllNetworks()) {
 			NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
 			if (capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) {
 				return true;
 			}
 		}
-
 		return false;
+	}
+
+	private void checkMetaLDU() {
+		int metaConsent = CAS.settings.getAdditionalConsent(89);
+		if (metaConsent == ConsentStatus.ACCEPTED) {
+			AdSettings.setDataProcessingOptions(new String[]{});
+		}
+		else if (metaConsent == ConsentStatus.DENIED) {
+			AdSettings.setDataProcessingOptions(new String[]{"LDU"});
+		}
 	}
 
 	private AdViewListener createBannerCallbacks() {
 		return new AdViewListener() {
+
 			@Override
 			public void onAdViewLoaded(CASBannerView casBannerView) {
 				emitSignal(Signals.BANNER_LOADED);
@@ -850,4 +879,5 @@ public class GodotCas extends GodotPlugin {
 	private FrameLayout getGodotLayout() {
 		return godotLayout;
 	}
+
 }

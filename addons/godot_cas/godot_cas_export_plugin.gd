@@ -19,33 +19,33 @@ class GodotCasAndroidExportPlugin:
 	extends EditorExportPlugin
 
 	const PLUGIN_NAME := "GodotCas"
-	const RELEASE_AAR := "godot_cas/android/GodotCas.4.7.4.release.aar"
+	const RELEASE_AAR := "godot_cas/android/GodotCas.4.8.3.release.aar"
 	const ADS_CONFIG_PATH_SETTING := "abyss_moth/ads/config_path"
 	const DEFAULT_ADS_CONFIG_PATH := "res://abyss_moth/data/ads/default_ad_config.tres"
 	const LEGACY_ADMOB_APPLICATION_ID_SETTING := "abyss_moth/ads/admob_application_id"
 	const SAMPLE_ADMOB_APPLICATION_ID := "ca-app-pub-3940256099942544~3347511713"
 
-	# Версии адаптеров привязаны к версии AAR (GodotCas 4.7.4). Обновлять вместе с aar.
+	# Версии адаптеров привязаны к версии AAR (GodotCas 4.8.3). Обновлять вместе с aar.
 	const CORE_DEPENDENCIES := [
 		"com.google.android.gms:play-services-ads-identifier:18.1.0",
-		"com.cleveradssolutions:cas-sdk:4.7.4",
+		"com.cleveradssolutions:cas-sdk:4.8.3",
 	]
 	const NETWORK_DEPENDENCIES := {
-		"google": "com.cleveradssolutions:google:25.2.0.4",
-		"applovin": "com.cleveradssolutions:applovin:13.6.3.0",
-		"unity": "com.cleveradssolutions:unity:4.18.1.0",
-		"ironsource": "com.cleveradssolutions:ironsource:9.4.3.1",
-		"vungle": "com.cleveradssolutions:vungle:7.7.4.1",
-		"inmobi": "com.cleveradssolutions:inmobi:11.3.0.2",
-		"mintegral": "com.cleveradssolutions:mintegral:17.1.61.2",
-		"pangle": "com.cleveradssolutions:pangle:8.1.0.4",
-		"bigo": "com.cleveradssolutions:bigo:5.9.0.0",
-		"yango": "com.cleveradssolutions:yango:8.1.0.0",
-		"facebook": "com.cleveradssolutions:facebook:6.21.0.1",
-		"ysonetwork": "com.cleveradssolutions:ysonetwork:1.3.6.0",
+		"google": "com.cleveradssolutions:google:25.5.0.0",
+		"applovin": "com.cleveradssolutions:applovin:13.6.4.1",
+		"unity": "com.cleveradssolutions:unity:4.20.1.0",
+		"ironsource": "com.cleveradssolutions:ironsource:9.6.0.1",
+		"vungle": "com.cleveradssolutions:vungle:7.7.9.0",
+		"inmobi": "com.cleveradssolutions:inmobi:11.5.0.1",
+		"mintegral": "com.cleveradssolutions:mintegral:17.1.81.1",
+		"pangle": "com.cleveradssolutions:pangle:8.3.0.5",
+		"bigo": "com.cleveradssolutions:bigo:6.1.0.0",
+		"yango": "com.cleveradssolutions:yango:8.5.0.0",
+		"facebook": "com.cleveradssolutions:facebook:6.22.0.1",
+		"ysonetwork": "com.cleveradssolutions:ysonetwork:1.3.9.0",
 		"cas_exchange": "com.cleveradssolutions:cas-exchange:4.6.6",
 		"maticoo": "com.cleveradssolutions:maticoo:1.8.6.3",
-		"monetrix": "com.cleveradssolutions:monetrix:1.2.0.2",
+		"monetrix": "com.cleveradssolutions:monetrix:1.4.0.5",
 	}
 	# Доп. maven-репозитории, нужные только если включена соответствующая сеть.
 	const NETWORK_REPOS := {

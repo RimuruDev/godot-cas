@@ -1,4 +1,4 @@
-# Godot CAS 4.7.4 — форк Abyss Moth (RU)
+# Godot CAS 4.8.3 — форк Abyss Moth (RU)
 
 > ## ⚠️ Прочитай сначала
 >
@@ -9,12 +9,12 @@
 > общим поддерживаемым релизом. Но мы используем его в проде, и у нас всё работает.
 > Если нужен «канонический» широко протестированный плагин — берите оригинал.
 
-Плагин CAS.ai SDK 4.7.4 для Godot (Android). Собираются оба модуля:
+Плагин CAS.ai SDK 4.8.3 для Godot (Android). Собираются оба модуля:
 
 | Модуль   | Компилируется против                 | Plugin API |
 |----------|--------------------------------------|------------|
-| `godot4` | `org.godotengine:godot:4.7.1.stable` | v2 |
-| `godot3` | `org.godotengine:godot:3.6.2.stable` | v1 |
+| `godot4` | `org.godotengine:godot:4.7.2.stable` | v2 |
+| `godot3` | `org.godotengine:godot:3.6.3.stable` | v1 |
 
 Версия компиляции — это API, против которого слинкован AAR, а не нижняя граница движка:
 зависимость `compileOnly`, поэтому плагин связывается с тем Godot, который лежит в твоём
@@ -26,11 +26,11 @@ export-шаблоне. [Официальная дока CAS](https://docs.page/c
 |---|---|
 | `isVpnActive()` в godot3 и godot4 | Нативное определение VPN (в дополнение к `isWifiOrMobileInternetEnabled()`). Доход с рекламы зависит от гео, поэтому VPN перекашивает fill rate и eCPM — это стоит уметь замечать |
 | `AD_ID` объявлен, а не вырезан | Upstream глушит его через `tools:node="remove"`, но на Android 13+ без него реклама не получит рекламный идентификатор. `ACCESS_COARSE_LOCATION` и `READ_PHONE_STATE` остаются вырезанными |
-| Godot 4.7.1 | Upstream собирает против 4.6.3 |
+| Godot 4.7.2 | Upstream собирает против 4.6.3 |
 | Обновлялка в один двойной клик | macOS / Windows / Linux — см. ниже |
 | Заточка под Abyss Moth | Конфиг-driven медиация/разрешения/consent живут в игровом проекте, а не здесь |
 
-Всё остальное — как в оригинале (CAS SDK 4.7.4): Interstitial, Rewarded, Banner, App Open,
+Всё остальное — как в оригинале (CAS SDK 4.8.3): Interstitial, Rewarded, Banner, App Open,
 consent flow, COPPA/audience, Tenjin и т.д. Новых публичных методов, кроме `isVpnActive()`,
 форк не добавляет.
 
@@ -59,8 +59,8 @@ consent flow, COPPA/audience, Tenjin и т.д. Новых публичных м�
 5. **Спрашивает** перед коммитом, тегом, пушем и публикацией — молча ничего не делает.
 
 Почему список медиации, а не релизы GitHub: версии адаптеров привязаны именно к нему.
-Если CAS-Android выложил 4.7.5, а список ещё отдаёт 4.7.4 — адаптеров под 4.7.5 ещё нет,
-и пиниться на неё рано. Инструмент проверяет оба источника и предупредит о расхождении.
+Если CAS-Android выложил новую версию, а список медиации ещё отдаёт предыдущую — адаптеры для нового SDK ещё не опубликованы,
+поэтому обновляться рано. Инструмент проверяет оба источника и предупредит о расхождении.
 
 ### Команды
 
@@ -77,15 +77,15 @@ consent flow, COPPA/audience, Tenjin и т.д. Новых публичных м�
 | `--yes`             | ко всем   | Отвечать «да» на все вопросы. На реальных ошибках всё равно остановится. |
 | `--no-release`      | `update`  | Только собрать и поставить, публикацию не предлагать. |
 | `--cas <ver>`       | `update`  | Форсировать версию CAS SDK вместо той, что в списке медиации. Даунгрейд переспросит. |
-| `--godot4 <ver>`    | `update`  | Сменить версию компиляции Godot 4, например `4.7.1`. Сначала проверяется наличие на Maven Central. |
-| `--godot3 <ver>`    | `update`  | Сменить версию компиляции Godot 3, например `3.6.2`. |
+| `--godot4 <ver>`    | `update`  | Сменить версию компиляции Godot 4, например `4.7.2`. Сначала проверяется наличие на Maven Central. |
+| `--godot3 <ver>`    | `update`  | Сменить версию компиляции Godot 3, например `3.6.3`. |
 | `--addon-dir <dir>` | `update`  | Ставить в этот каталог `addons/godot_cas/android`. |
 | `--bump`            | `release` | Увеличить ревизию форка перед публикацией. |
 
 ```bash
 python3 tools/cas.py check                   # версии и тулчейн, без изменений
 python3 tools/cas.py update --no-release     # только собрать и поставить
-python3 tools/cas.py update --godot4 4.7.1   # сменить версию компиляции Godot 4
+python3 tools/cas.py update --godot4 4.7.2   # сменить версию компиляции Godot 4
 python3 tools/cas.py release --bump          # опубликовать, увеличив ревизию форка
 ```
 
@@ -93,7 +93,7 @@ python3 tools/cas.py release --bump          # опубликовать, уве�
 
 | Что          | Версия  | Примечание |
 |--------------|---------|------------|
-| JDK          | 17–21   | Gradle 8.7 **не запустится** на 22+. Инструмент сам ищет подходящий JDK и скажет, если его нет. |
+| JDK          | 17–21   | Gradle 8.11.1 **не запустится** на 22+. Инструмент сам ищет подходящий JDK и скажет, если его нет. |
 | Android SDK  | platform 35, build-tools 35.0.0 | Недостающие пакеты предложит доставить через `sdkmanager`. |
 | Python       | 3.9+    | Только стандартная библиотека, `pip install` не нужен. Проверено на 3.9 и 3.14. |
 
@@ -133,23 +133,23 @@ Android SDK ставится через Android Studio либо через comma
 
 | Компонент              | Версия          | Где задано |
 |------------------------|-----------------|------------|
-| CAS SDK                | 4.7.4           | `build.gradle` → `pluginVersionName` |
-| Ревизия форка          | 2               | `build.gradle` → `pluginVersionCode` |
-| Godot 4, версия компиляции | 4.7.1.stable | `godot4/build.gradle` → `ext.godotVersion` |
-| Godot 3, версия компиляции | 3.6.2.stable | `godot3/build.gradle` → `ext.godotVersion` |
+| CAS SDK                | 4.8.3           | `build.gradle` → `pluginVersionName` |
+| Ревизия форка          | 1               | `build.gradle` → `pluginVersionCode` |
+| Godot 4, версия компиляции | 4.7.2.stable | `godot4/build.gradle` → `ext.godotVersion` |
+| Godot 3, версия компиляции | 3.6.3.stable | `godot3/build.gradle` → `ext.godotVersion` |
 | compileSdk / targetSdk | 35              | `godot*/build.gradle` |
 | minSdk                 | 24              | `godot*/build.gradle` |
 | Java source/target     | 17              | `godot*/build.gradle` |
 | NDK                    | 28.1.13356709   | `godot*/build.gradle` |
 | Build tools            | 35.0.0          | `godot*/build.gradle` |
 | Android Gradle Plugin  | 8.6.1           | `godot*/build.gradle` |
-| Gradle                 | 8.7             | `gradle/wrapper/gradle-wrapper.properties` |
+| Gradle                 | 8.11.1             | `gradle/wrapper/gradle-wrapper.properties` |
 
 `pluginVersionName` следует за версией CAS SDK. `pluginVersionCode` — ревизия **этого
 форка**: сбрасывается в 1 при смене версии SDK и растёт на каждую пересборку форка на той
 же SDK. Он намеренно **не** синхронизируется с upstream — там счётчик считает их
 пересборки, а не наши. То же самое с `godotVersion`. Теги релизов — `v<sdk>-rev<n>`,
-то есть текущий это `v4.7.4-rev2`.
+то есть текущий это `v4.8.3-rev1`.
 
 ## Что использовать — оригинал или форк?
 

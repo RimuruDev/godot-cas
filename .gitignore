@@ -9,3 +9,5 @@ libs/
 cas.local.json
 __pycache__/
 *.pyc
+# AppleDouble metadata files created on external macOS volumes.
+._*

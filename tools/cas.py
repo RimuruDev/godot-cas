@@ -42,7 +42,7 @@ CAS_RELEASES_API = "https://api.github.com/repos/cleveradssolutions/CAS-Android/
 GODOT_MAVEN_METADATA = "https://repo1.maven.org/maven2/org/godotengine/godot/maven-metadata.xml"
 MAVEN_BASE = "https://repo1.maven.org/maven2"
 
-# Gradle 8.7 refuses to run on JDK 22+.
+# Gradle 8.11.1 is verified here with JDK 21; stay within the supported JDK range.
 JDK_MIN, JDK_MAX = 17, 21
 
 REQUIRED_SDK_PACKAGES = ("platforms;android-35", "build-tools;35.0.0")
@@ -948,8 +948,8 @@ def main(argv: list[str] | None = None) -> int:
 
     update = subparsers.add_parser("update", help="build both AARs and install into the addon")
     update.add_argument("--cas", help="force a CAS SDK version instead of the mediation list one")
-    update.add_argument("--godot4", help="bump the Godot 4 compile target, e.g. 4.7.1")
-    update.add_argument("--godot3", help="bump the Godot 3 compile target, e.g. 3.6.2")
+    update.add_argument("--godot4", help="bump the Godot 4 compile target, e.g. 4.7.2")
+    update.add_argument("--godot3", help="bump the Godot 3 compile target, e.g. 3.6.3")
     update.add_argument("--addon-dir", help="game addons/godot_cas/android directory")
     update.add_argument("--no-release", action="store_true", help="never prompt to publish")
     update.set_defaults(func=cmd_update)

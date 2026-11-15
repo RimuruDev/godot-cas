@@ -10,7 +10,7 @@
 > - The `AD_ID` permission is **declared** rather than stripped — upstream tags it
 >   `tools:node="remove"`, but ads need the advertising id on Android 13+.
 >   `ACCESS_COARSE_LOCATION` and `READ_PHONE_STATE` stay removed.
-> - Godot 4 builds against the current Godot **4.7.1** Android library (upstream: 4.6.3).
+> - Godot 4 builds against the current Godot **4.7.2** Android library (upstream: 4.6.3).
 > - One double-click updater for macOS / Windows / Linux — see *Rebuilding* below.
 > - Tuned for the Abyss Moth ad stack (config-driven mediation/permissions/consent lives
 >   in the game project, not here).
@@ -19,17 +19,17 @@
 > a general-purpose, supported release — but we do ship it in production and it works fine
 > for us. For the canonical, broadly-tested plugin, prefer upstream.
 
-# Godot CAS 4.7.4 (Abyss Moth fork)
-[![CAS.AI](https://img.shields.io/badge/CAS.AI_SDK_4.7.4-blue?style=for-the-badge&logoSize=auto)](https://cas.ai/)
+# Godot CAS 4.8.3 (Abyss Moth fork)
+[![CAS.AI](https://img.shields.io/badge/CAS.AI_SDK_4.8.3-blue?style=for-the-badge&logoSize=auto)](https://cas.ai/)
 [![Godot](https://img.shields.io/badge/Godot%20Engine-4.7.x%20%7C%203.6.x-blue?style=for-the-badge&logo=godotengine&logoSize=auto)](https://godotengine.org/)
 [![GitHub License](https://img.shields.io/github/license/damnedpie/godot-cas?style=for-the-badge)](https://github.com/damnedpie/godot-cas/blob/main/LICENSE)
 
-CAS SDK 4.7.4 Android plugin for Godot. Ships both modules:
+CAS SDK 4.8.3 Android plugin for Godot. Ships both modules:
 
 | Module   | Compiled against                  | Plugin API |
 |----------|-----------------------------------|------------|
-| `godot4` | `org.godotengine:godot:4.7.1.stable` | v2 |
-| `godot3` | `org.godotengine:godot:3.6.2.stable` | v1 |
+| `godot4` | `org.godotengine:godot:4.7.2.stable` | v2 |
+| `godot3` | `org.godotengine:godot:3.6.3.stable` | v1 |
 
 The compile target is the API the AAR links against, not a floor on your engine version —
 `compileOnly` means the plugin binds to whatever Godot ships in your export template.
@@ -79,15 +79,15 @@ exist yet and pinning it would mismatch them. The tool checks both and warns on 
 | `--yes`             | all       | Answer every prompt with yes. Unattended runs still stop on real errors. |
 | `--no-release`      | `update`  | Build and install only; never offer to publish. |
 | `--cas <ver>`       | `update`  | Force a CAS SDK version instead of the mediation list's. Downgrades ask for confirmation. |
-| `--godot4 <ver>`    | `update`  | Move the Godot 4 compile target, e.g. `4.7.1`. Verified against Maven Central first. |
-| `--godot3 <ver>`    | `update`  | Move the Godot 3 compile target, e.g. `3.6.2`. |
+| `--godot4 <ver>`    | `update`  | Move the Godot 4 compile target, e.g. `4.7.2`. Verified against Maven Central first. |
+| `--godot3 <ver>`    | `update`  | Move the Godot 3 compile target, e.g. `3.6.3`. |
 | `--addon-dir <dir>` | `update`  | Install into this `addons/godot_cas/android` directory. |
 | `--bump`            | `release` | Increment the fork revision before publishing. |
 
 ```bash
 python3 tools/cas.py check                   # versions + toolchain, no changes
 python3 tools/cas.py update --no-release     # build and install only
-python3 tools/cas.py update --godot4 4.7.1   # move the Godot 4 compile target
+python3 tools/cas.py update --godot4 4.7.2   # move the Godot 4 compile target
 python3 tools/cas.py release --bump          # publish, incrementing the fork revision
 ```
 
@@ -95,7 +95,7 @@ python3 tools/cas.py release --bump          # publish, incrementing the fork re
 
 | Need         | Version | Notes |
 |--------------|---------|-------|
-| JDK          | 17–21   | Gradle 8.7 refuses to run on 22+. The tool finds a supported JDK itself and tells you if there is none. |
+| JDK          | 17–21   | Gradle 8.11.1 refuses to run on 22+. The tool finds a supported JDK itself and tells you if there is none. |
 | Android SDK  | platform 35, build-tools 35.0.0 | Missing packages are offered for install via `sdkmanager`. |
 | Python       | 3.9+    | Standard library only, no pip install. Verified on 3.9 and 3.14. |
 
@@ -134,23 +134,23 @@ and `README_RU.md` so their pinned adapter versions match the AAR.
 
 | Component            | Version         | Set in |
 |----------------------|-----------------|--------|
-| CAS SDK              | 4.7.4           | `build.gradle` → `pluginVersionName` |
-| Fork revision        | 2               | `build.gradle` → `pluginVersionCode` |
-| Godot 4 compile target | 4.7.1.stable  | `godot4/build.gradle` → `ext.godotVersion` |
-| Godot 3 compile target | 3.6.2.stable  | `godot3/build.gradle` → `ext.godotVersion` |
+| CAS SDK              | 4.8.3           | `build.gradle` → `pluginVersionName` |
+| Fork revision        | 1               | `build.gradle` → `pluginVersionCode` |
+| Godot 4 compile target | 4.7.2.stable  | `godot4/build.gradle` → `ext.godotVersion` |
+| Godot 3 compile target | 3.6.3.stable  | `godot3/build.gradle` → `ext.godotVersion` |
 | compileSdk / targetSdk | 35            | `godot*/build.gradle` |
 | minSdk               | 24              | `godot*/build.gradle` |
 | Java source/target   | 17              | `godot*/build.gradle` |
 | NDK                  | 28.1.13356709   | `godot*/build.gradle` |
 | Build tools          | 35.0.0          | `godot*/build.gradle` |
 | Android Gradle Plugin| 8.6.1           | `godot*/build.gradle` |
-| Gradle               | 8.7             | `gradle/wrapper/gradle-wrapper.properties` |
+| Gradle               | 8.11.1             | `gradle/wrapper/gradle-wrapper.properties` |
 
 `pluginVersionName` tracks the CAS SDK. `pluginVersionCode` is **this fork's** revision: it
 resets to 1 when the SDK version moves and increments on every fork rebuild of the same SDK.
 It is deliberately never synced from upstream — upstream's revision counts upstream's
 rebuilds, not ours. Same for `godotVersion`. Releases are tagged `v<sdk>-rev<n>`, so the
-current one is `v4.7.4-rev2`.
+current one is `v4.8.3-rev1`.
 
 ## Setup
 
